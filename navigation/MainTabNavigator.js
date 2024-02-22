@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from '../screens/Auth/Login';
 import SignupScreen from '../screens/Auth/Signup';
+import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -17,6 +18,8 @@ const MainTabNavigator = () => {
             iconName = 'log-in-outline';
           } else if (route.name === 'Signup') {
             iconName = 'person-add-outline';
+          } else if (route.name === 'ForgotPassword') {
+            iconName = 'key-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -25,6 +28,7 @@ const MainTabNavigator = () => {
     >
       <Tab.Screen name="Login" component={LoginScreen} />
       <Tab.Screen name="Signup" component={SignupScreen} />
+      <Tab.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
     </Tab.Navigator>
   );
 };
