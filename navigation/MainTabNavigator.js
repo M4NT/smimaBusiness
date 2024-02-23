@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from '../screens/Auth/Login';
 import SignupScreen from '../screens/Auth/Signup';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
+import Profile from '../screens/Profile/Profile';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -29,6 +30,7 @@ const MainTabNavigator = () => {
       <Tab.Screen name="Login" component={LoginScreen} />
       <Tab.Screen name="Signup" component={SignupScreen} />
       <Tab.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };
