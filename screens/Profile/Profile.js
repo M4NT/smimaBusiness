@@ -1,8 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ProductCard from './ProductCard'; // Ajuste o caminho conforme necessário
 
 const ProfileScreen = () => {
+    const [activeTab, setActiveTab] = useState('posts');
+
+    // Exemplo de dados de produtos (pode vir de uma API, por exemplo)
+    const products = [
+        {
+            id: 1,
+            name: 'Produto 1',
+            image: 'https://via.placeholder.com/150',
+            price: 'R$ 10,00',
+            discount: '10% OFF',
+            shipping: 'Frete grátis',
+        },
+        {
+            id: 2,
+            name: 'Produto 2',
+            image: 'https://via.placeholder.com/150',
+            price: 'R$ 20,00',
+            discount: '20% OFF',
+            shipping: 'Frete grátis',
+        },
+    ];
+
+    const renderContent = () => {
+        if (activeTab === 'posts') {
+            return (
+                <ScrollView>
+                    <View style={styles.photoGrid}>
+                        {/* Aqui você pode adicionar as publicações */}
+                        <Image
+                            source={{ uri: 'https://via.placeholder.com/150' }}
+                            style={styles.photo}
+                        />
+                        {/* Adicione mais imagens conforme necessário */}
+                    </View>
+                </ScrollView>
+            );
+        } else if (activeTab === 'products') {
+            return (
+                <ScrollView>
+                    <View style={styles.productGrid}>
+                        {/* Renderize os cards de produtos */}
+                        {products.map(product => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </View>
+                </ScrollView>
+            );
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -35,60 +86,23 @@ const ProfileScreen = () => {
                     <Text style={styles.buttonText}>Adicionar Contato</Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView>
-                <View style={styles.photoGrid}>
-                    {/* Aqui você pode adicionar várias fotos para simular a rolagem */}
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    <Image
-                        source={{ uri: 'https://via.placeholder.com/150' }}
-                        style={styles.photo}
-                    />
-                    {/* Adicione mais imagens conforme necessário */}
-                </View>
-            </ScrollView>
+            <View style={styles.tabContainer}>
+                <TouchableOpacity
+                    style={[styles.tabButton, activeTab === 'posts' && styles.activeTabButton]}
+                    onPress={() => setActiveTab('posts')}
+                >
+                    <Ionicons name="images-outline" size={24} color="black" />
+                    <Text style={styles.tabButtonText}>Publicações</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.tabButton, activeTab === 'products' && styles.activeTabButton]}
+                    onPress={() => setActiveTab('products')}
+                >
+                    <Ionicons name="pricetag-outline" size={24} color="black" />
+                    <Text style={styles.tabButtonText}>Produtos</Text>
+                </TouchableOpacity>
+            </View>
+            {renderContent()}
         </View>
     );
 };
@@ -142,6 +156,24 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    tabContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 10,
+    },
+    tabButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    activeTabButton: {
+        borderBottomWidth: 2,
+        borderColor: 'blue',
+    },
+    tabButtonText: {
+        fontWeight: 'bold',
+        marginLeft: 5,
+    },
     photoGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -152,6 +184,12 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         marginBottom: 10,
+    },
+    productGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        padding: 5,
     },
 });
 
