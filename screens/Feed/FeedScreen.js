@@ -43,7 +43,7 @@ const Post = ({ post }) => {
     if (expanded) {
       return post.description;
     } else {
-      const maxCharacters = 95;
+      const maxCharacters = 105;
       const maxLines = 2;
       const lines = post.description.split('\n');
 
@@ -88,14 +88,12 @@ const Post = ({ post }) => {
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="share-social-outline" size={24} color="black" />
           </TouchableOpacity>
+          <Text style={styles.likeCount}>{post.likeCount} curtidas</Text>
         </View>
         <TouchableOpacity style={[styles.actionButton, styles.saveButton]}>
           <Ionicons name="bookmark-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
-
-      {/* Contagem de curtidas */}
-      <Text style={styles.likeCount}>{post.likeCount} curtidas</Text>
 
       {/* Descrição da postagem */}
       <View style={styles.postDescription}>
@@ -166,7 +164,7 @@ const FeedScreen = () => {
       userCategory: 'Categoria do Usuário',
       postImage: 'https://via.placeholder.com/150', // Link fictício para a foto da postagem
       likeCount: 32,
-      description: 'Descrição da postagem...',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     },
     // Adicione mais dados conforme necessário
   ];
@@ -246,7 +244,11 @@ const styles = StyleSheet.create({
   },
   leftActions: {
     flexDirection: 'row',
-    flex: 1,
+    alignItems: 'center',
+  },
+  likeCount: {
+    fontWeight: 'bold',
+    marginLeft: 5, // Adicionando um pequeno espaçamento entre os ícones e o contador de curtidas
   },
   actionButton: {
     marginRight: 10,
