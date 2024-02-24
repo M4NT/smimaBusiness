@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import ProductCard from './ProductCard'; // Ajuste o caminho conforme necessário
 import StoryComponent from '../../components/StoryComponent'; // Ajuste o caminho conforme necessário
-import LocationButton from '../../components/LocationButton'; // Importe o componente LocationButton
 
 const ProfileScreen = () => {
     const [activeTab, setActiveTab] = useState('posts');
@@ -64,19 +63,6 @@ const ProfileScreen = () => {
                 <Text style={styles.username}>SeuNomeDeUsuário</Text>
                 <Text style={styles.bio}>Descrição do perfil aqui...</Text>
             </View>
-            {/* <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.treeButton} onPress={() => abrirCaminhosAlternativos()}>
-                    <Ionicons name="star" size={24} color="white" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.achievementsButton} onPress={() => verConquistas()}>
-                    <Ionicons name="trophy" size={24} color="white" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.locationButton} onPress={() => abrirMapa()}>
-                    <Ionicons name="location-outline" size={24} color="white" />
-                </TouchableOpacity>
-            </View> */}
 
             <View style={styles.statsContainer}>
                 <View style={styles.statsItem}>
@@ -146,31 +132,6 @@ const styles = StyleSheet.create({
     bio: {
         marginTop: 5,
         color: 'gray',
-    },
-    treeButton: {
-        position: 'absolute', // Posicionamento absoluto para o botão da árvore
-        top: 20,
-        right: 20,
-        backgroundColor: 'green',
-        borderRadius: 20,
-        padding: 10,
-    },
-    achievementsButton: {
-        position: 'absolute', // Posicionamento absoluto para o botão de conquistas
-        top: 20,
-        left: '50%', // Coloca o botão no meio horizontalmente
-        transform: [{ translateX: -24 }], // Ajusta a posição do botão
-        backgroundColor: 'gold',
-        borderRadius: 20,
-        padding: 10,
-    },
-    locationButton: {
-        position: 'absolute', // Posicionamento absoluto para o botão de localização
-        bottom: 20,
-        right: 20,
-        backgroundColor: 'blue',
-        borderRadius: 20,
-        padding: 10,
     },
     statsContainer: {
         flexDirection: 'row',
