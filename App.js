@@ -1,10 +1,10 @@
-// navigation/AppNavigator.js
+// App.js
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import MainTabNavigator from './navigation/MainTabNavigator';
+import MainTabNavigator from './navigation/MainTabNavigator'; // Supondo que você tenha um arquivo de navegação principal
 
-const AppNavigator = () => {
+const App = () => {
   return (
     <NavigationContainer>
       <MainTabNavigator />
@@ -12,4 +12,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator;
+export default App;

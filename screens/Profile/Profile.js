@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import ProductCard from './ProductCard'; // Ajuste o caminho conforme necessário
 import StoryComponent from '../../components/StoryComponent'; // Ajuste o caminho conforme necessário
 
 const ProfileScreen = () => {
     const [activeTab, setActiveTab] = useState('posts');
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation(); // Obtenha a instância de navegação
 
     // Exemplo de dados de produtos (pode vir de uma API, por exemplo)
     const products = [
@@ -91,6 +94,49 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
             </View>
 
+            <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => setModalVisible(true)}
+            >
+                <Ionicons name="menu-outline" size={24} color="black" />
+            </TouchableOpacity>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                    <View style={styles.modalBackground}>
+                        <TouchableWithoutFeedback>
+                            <View style={styles.modalView}>
+                                <View style={styles.dragBar}></View>
+                                {/* Atualize as funções onPress para navegar entre as telas */}
+                                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                                    <View style={styles.modalOption}>
+                                        <Ionicons name="key-outline" size={24} color="black" />
+                                        <Text style={styles.modalText}>Senha</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                                    <View style={styles.modalOption}>
+                                        <Ionicons name="person-add-outline" size={24} color="black" />
+                                        <Text style={styles.modalText}>Registro</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                                    <View style={styles.modalOption}>
+                                        <Ionicons name="lock-closed-outline" size={24} color="black" />
+                                        <Text style={styles.modalText}>Esqueceu a senha?</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+
             <View style={styles.storySection}>
                 <StoryComponent />
             </View>
@@ -121,8 +167,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        position: 'relative',
         alignItems: 'center',
+        marginBottom: 20,
     },
     username: {
         fontSize: 24,
@@ -200,6 +246,42 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         padding: 5,
+    },
+    menuButton: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        zIndex: 1,
+    },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'flex-end',
+    },
+    modalView: {
+        backgroundColor: 'white',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        paddingTop: 40,
+        maxHeight: '60%',
+    },
+    dragBar: {
+        width: 40,
+        height: 5,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        borderRadius: 5,
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
+    modalOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalText: {
+        fontSize: 18,
+        marginLeft: 10,
     },
 });
 
