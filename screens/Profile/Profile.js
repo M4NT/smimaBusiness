@@ -1,17 +1,16 @@
-import React, { useState, useCallback } from 'react'; // Importe useCallback corretamente
+import React, { useState, useCallback } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Importações necessárias
 
-import ProductCard from './ProductCard'; // Ajuste o caminho conforme necessário
-import StoryComponent from '../../components/StoryComponent'; // Ajuste o caminho conforme necessário
+import ProductCard from './ProductCard';
+import StoryComponent from '../../components/StoryComponent';
 
 const ProfileScreen = () => {
     const [activeTab, setActiveTab] = useState('posts');
     const [modalVisible, setModalVisible] = useState(false);
-    const navigation = useNavigation(); // Obtenha a instância de navegação
+    const navigation = useNavigation();
 
-    // Limpa o estado do modal ao focar na tela
     useFocusEffect(
         useCallback(() => {
             setModalVisible(false);
@@ -20,6 +19,21 @@ const ProfileScreen = () => {
             };
         }, [])
     );
+
+    const navigateToLogin = () => {
+        setModalVisible(false); // Fecha o modal ao navegar
+        navigation.navigate('Login');
+    };
+
+    const navigateToSignup = () => {
+        setModalVisible(false); // Fecha o modal ao navegar
+        navigation.navigate('Signup');
+    };
+
+    const navigateToForgotPassword = () => {
+        setModalVisible(false); // Fecha o modal ao navegar
+        navigation.navigate('ForgotPassword');
+    };
 
     // Exemplo de dados de produtos (pode vir de uma API, por exemplo)
     const products = [
@@ -122,20 +136,19 @@ const ProfileScreen = () => {
                         <TouchableWithoutFeedback>
                             <View style={styles.modalView}>
                                 <View style={styles.dragBar}></View>
-                                {/* Atualize as funções onPress para navegar entre as telas */}
-                                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                                <TouchableOpacity onPress={navigateToLogin}>
                                     <View style={styles.modalOption}>
                                         <Ionicons name="key-outline" size={24} color="black" />
                                         <Text style={styles.modalText}>Senha</Text>
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                                <TouchableOpacity onPress={navigateToSignup}>
                                     <View style={styles.modalOption}>
                                         <Ionicons name="person-add-outline" size={24} color="black" />
                                         <Text style={styles.modalText}>Registro</Text>
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                                <TouchableOpacity onPress={navigateToForgotPassword}>
                                     <View style={styles.modalOption}>
                                         <Ionicons name="lock-closed-outline" size={24} color="black" />
                                         <Text style={styles.modalText}>Esqueceu a senha?</Text>

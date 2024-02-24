@@ -1,9 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LoginScreen from '../screens/Auth/Login';
-import SignupScreen from '../screens/Auth/Signup';
-import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
-import Profile from '../screens/Profile/Profile';
+import FeedScreen from '../screens/Feed/FeedScreen'; // Importe corretamente
+import CentralScreen from '../screens/Central/CentralScreen'; // Importe corretamente
+import Profile from '../screens/Profile/Profile'; // Importe corretamente
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -15,21 +14,20 @@ const MainTabNavigator = () => {
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === 'Login') {
-            iconName = 'log-in-outline';
-          } else if (route.name === 'Signup') {
-            iconName = 'person-add-outline';
-          } else if (route.name === 'ForgotPassword') {
-            iconName = 'key-outline';
+          if (route.name === 'Feed') {
+            iconName = 'newspaper-outline';
+          } else if (route.name === 'Central') {
+            iconName = 'home-outline';
+          } else if (route.name === 'Profile') {
+            iconName = 'person-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen name="Login" component={LoginScreen} />
-      <Tab.Screen name="Signup" component={SignupScreen} />
-      <Tab.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Central" component={CentralScreen} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
