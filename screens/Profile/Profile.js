@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react'; // Importe useCallback corretamente
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import ProductCard from './ProductCard'; // Ajuste o caminho conforme necessário
 import StoryComponent from '../../components/StoryComponent'; // Ajuste o caminho conforme necessário
@@ -10,6 +10,16 @@ const ProfileScreen = () => {
     const [activeTab, setActiveTab] = useState('posts');
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation(); // Obtenha a instância de navegação
+
+    // Limpa o estado do modal ao focar na tela
+    useFocusEffect(
+        useCallback(() => {
+            setModalVisible(false);
+            return () => {
+                // Cleanup function
+            };
+        }, [])
+    );
 
     // Exemplo de dados de produtos (pode vir de uma API, por exemplo)
     const products = [
