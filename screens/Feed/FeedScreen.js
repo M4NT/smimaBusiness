@@ -31,7 +31,6 @@ const StoryComponent = () => {
 };
 
 // Componente de Post
-// Dentro do componente Post
 const Post = ({ post }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -43,7 +42,7 @@ const Post = ({ post }) => {
     if (expanded) {
       return post.description;
     } else {
-      const maxCharacters = 105;
+      const maxCharacters = 95;
       const maxLines = 2;
       const lines = post.description.split('\n');
 
@@ -62,7 +61,14 @@ const Post = ({ post }) => {
         <Image source={{ uri: post.userImage }} style={styles.userImage} />
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{post.userName}</Text>
-          <Text style={styles.userCategory}>{post.userCategory}</Text>
+          <View style={styles.userInfoRight}>
+            <View style={styles.categoryAndSeller}>
+              {post.isSeller && <Ionicons name="storefront-outline" size={20} color="green" />}
+              {post.isVerified && <Ionicons name="checkmark-circle" size={20} color="blue" />}
+              <Text style={styles.userCategory}>{post.userCategory}</Text>
+            </View>
+            <Text style={styles.userCity}>{post.userCity}</Text>
+          </View>
         </View>
       </View>
       {/* Corpo da postagem */}
@@ -119,10 +125,11 @@ const FeedScreen = () => {
       userImage: 'https://via.placeholder.com/150', // Link fictício para a foto de perfil do usuário
       userName: 'Nome do Usuário',
       userCategory: 'Categoria do Usuário',
+      userCity: 'Cidade do Usuário',
       postImage: 'https://via.placeholder.com/150', // Link fictício para a foto da postagem
       likeCount: 47,
       description: 'Descrição da postagem...',
-      // Adicione um array de produtos abaixo
+      isSeller: true, // Indica se o perfil é de um vendedor
       products: [
         {
           id: 1,
@@ -162,9 +169,11 @@ const FeedScreen = () => {
       userImage: 'https://via.placeholder.com/150', // Link fictício para a foto de perfil do usuário
       userName: 'Nome do Usuário',
       userCategory: 'Categoria do Usuário',
+      userCity: 'Cidade do Usuário',
       postImage: 'https://via.placeholder.com/150', // Link fictício para a foto da postagem
       likeCount: 32,
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      isVerified: true, // Indica se o perfil é verificado
     },
     // Adicione mais dados conforme necessário
   ];
@@ -279,10 +288,36 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   productImage: {
-    width: 300, // Aumentando o tamanho em 50%
-    height: 300, // Aumentando o tamanho em 50%
+    width: 300,
+    height: 300,
     borderRadius: 10,
   },
+  iconWithText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  iconText: {
+    marginLeft: 5,
+    fontSize: 14,
+  },
+  userCity: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  categoryAndSeller: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userCategory: {
+    fontSize: 14,
+    color: 'gray',
+    marginLeft: 5,
+  },
+  userCity: {
+    fontSize: 14,
+    color: 'gray',
+  },  
 });
 
 export default FeedScreen;
