@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Image, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Importação do ícone
 
 const StoryComponent = () => {
     // Array de URLs de imagens de exemplo para os storys
@@ -15,6 +16,13 @@ const StoryComponent = () => {
     return (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.container}>
+                {/* Adiciona o primeiro item manualmente */}
+                <View style={styles.storyContainer}>
+                    <View style={[styles.storyImage, { backgroundColor: 'lightgrey', justifyContent: 'center', alignItems: 'center' }]}>
+                        <Ionicons name="add" size={32} color="white" />
+                    </View>
+                    <Text style={styles.storyText}>Criar</Text>
+                </View>
                 {storyImages.map((image, index) => (
                     <View key={index} style={styles.storyContainer}>
                         <Image source={{ uri: image }} style={styles.storyImage} />

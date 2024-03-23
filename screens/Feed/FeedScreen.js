@@ -19,16 +19,24 @@ const StoryComponent = () => {
   return (
     <View style={styles.storyContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {/* Adiciona o primeiro item manualmente */}
+        <TouchableOpacity style={styles.storyItem} onPress={() => console.log('Criar novo story')}>
+          <View style={[styles.storyImage, { backgroundColor: 'lightgrey', justifyContent: 'center', alignItems: 'center' }]}>
+            <Ionicons name="add" size={32} color="white" />
+          </View>
+          <Text style={styles.storyText}>Criar</Text>
+        </TouchableOpacity>
         {storyImages.map((image, index) => (
-          <View key={index} style={styles.storyItem}>
+          <TouchableOpacity key={index} style={styles.storyItem} onPress={() => console.log(`Abrir story ${index}`)}>
             <Image source={{ uri: image }} style={styles.storyImage} />
             <Text style={styles.storyText}>Assunto {index + 1}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
   );
 };
+
 
 // Componente de Post
 const Post = ({ post }) => {
@@ -317,7 +325,7 @@ const styles = StyleSheet.create({
   userCity: {
     fontSize: 14,
     color: 'gray',
-  },  
+  },
 });
 
 export default FeedScreen;
