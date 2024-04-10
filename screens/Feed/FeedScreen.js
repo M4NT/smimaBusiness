@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity, Modal } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import ProductContainer from '../../components/ProductContainer';
 
-// Componente de Story
 const StoryComponent = () => {
-  // Array de URLs de imagens de exemplo para os stories
   const storyImages = [
     'https://via.placeholder.com/150',
     'https://via.placeholder.com/150',
     'https://via.placeholder.com/150',
     'https://via.placeholder.com/150',
     'https://via.placeholder.com/150',
-    // Adicione mais URLs de imagens conforme necessário
   ];
 
   return (
     <View style={styles.storyContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {/* Adiciona o primeiro item manualmente */}
         <TouchableOpacity style={styles.storyItem} onPress={() => console.log('Criar novo story')}>
           <View style={[styles.storyImage, { backgroundColor: 'lightgrey', justifyContent: 'center', alignItems: 'center' }]}>
             <Ionicons name="add" size={32} color="white" />
@@ -37,13 +33,17 @@ const StoryComponent = () => {
   );
 };
 
-
 // Componente de Post
 const Post = ({ post }) => {
   const [expanded, setExpanded] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const toggleExpansion = () => {
     setExpanded(!expanded);
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
   };
 
   const formatDescription = () => {
@@ -64,7 +64,6 @@ const Post = ({ post }) => {
 
   return (
     <View style={styles.postContainer}>
-      {/* Cabeçalho da postagem */}
       <View style={styles.postHeader}>
         <Image source={{ uri: post.userImage }} style={styles.userImage} />
         <View style={styles.userInfo}>
@@ -78,19 +77,55 @@ const Post = ({ post }) => {
             <Text style={styles.userCity}>{post.userCity}</Text>
           </View>
         </View>
+        <TouchableOpacity onPress={toggleModal} style={styles.actionButton}>
+          <MaterialIcons name="more-vert" size={24} color="black" />
+        </TouchableOpacity>
       </View>
-      {/* Corpo da postagem */}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalTopBar}>
+            {/* Aqui você pode adicionar qualquer conteúdo desejado para a barra superior */}
+          </View>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <Ionicons name="bookmark-outline" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Salvar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <Ionicons name="share-social-outline" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Compartilhar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <MaterialIcons name="favorite-border" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Adicionar aos Favoritos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <Ionicons name="person-remove-outline" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Deixar de Seguir</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <Ionicons name="eye-off-outline" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Ocultar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
+              <MaterialIcons name="report" size={24} color="black" />
+              <Text style={styles.modalOptionText}>Denunciar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <Image source={{ uri: post.postImage }} style={styles.postImage} />
-
-      {/* Espaçamento entre a imagem da publicação e o ProductContainer */}
       <View style={{ height: 5 }} />
-
-      {/* Exibir o ProductContainer somente se houver produtos */}
       {post.products && post.products.length > 0 && (
         <ProductContainer products={post.products} />
       )}
-
-      {/* Ações da postagem */}
       <View style={styles.postActions}>
         <View style={styles.leftActions}>
           <TouchableOpacity style={styles.actionButton}>
@@ -108,8 +143,6 @@ const Post = ({ post }) => {
           <Ionicons name="bookmark-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
-
-      {/* Descrição da postagem */}
       <View style={styles.postDescription}>
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{post.userName}</Text>
@@ -126,18 +159,17 @@ const Post = ({ post }) => {
 };
 
 const FeedScreen = () => {
-  // Dados de exemplo para o feed
   const data = [
     {
       id: 1,
-      userImage: 'https://via.placeholder.com/150', // Link fictício para a foto de perfil do usuário
+      userImage: 'https://via.placeholder.com/150',
       userName: 'Nome do Usuário',
       userCategory: 'Categoria do Usuário',
       userCity: 'Cidade do Usuário',
-      postImage: 'https://via.placeholder.com/150', // Link fictício para a foto da postagem
+      postImage: 'https://via.placeholder.com/150',
       likeCount: 47,
       description: 'Descrição da postagem...',
-      isSeller: true, // Indica se o perfil é de um vendedor
+      isSeller: true,
       products: [
         {
           id: 1,
@@ -169,25 +201,23 @@ const FeedScreen = () => {
           price: 'R$ 20,00',
           image: 'https://via.placeholder.com/150',
         },
-        // Adicione mais produtos conforme necessário
       ],
     },
     {
       id: 2,
-      userImage: 'https://via.placeholder.com/150', // Link fictício para a foto de perfil do usuário
+      userImage: 'https://via.placeholder.com/150',
       userName: 'Nome do Usuário',
       userCategory: 'Categoria do Usuário',
       userCity: 'Cidade do Usuário',
-      postImage: 'https://via.placeholder.com/150', // Link fictício para a foto da postagem
+      postImage: 'https://via.placeholder.com/150',
       likeCount: 32,
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      isVerified: true, // Indica se o perfil é verificado
+      isVerified: true,
     },
-    // Adicione mais dados conforme necessário
   ];
 
   return (
-    <ScrollView>
+    <>
       <StoryComponent />
       <FlatList
         data={data}
@@ -198,7 +228,56 @@ const FeedScreen = () => {
         )}
         keyExtractor={item => item.id.toString()}
       />
-    </ScrollView>
+    </>
+  );
+};
+
+const ProfileModal = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const toggleModalSize = () => {
+    setModalVisible((prevVisible) => !prevVisible);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.topBar} onPress={toggleModalSize}>
+        {/* Ícone ou indicador visual para mostrar que pode ser pressionado */}
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalView}>
+            <View style={styles.dragBar}></View>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+              <Ionicons name="close-circle-outline" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToLogin}>
+              <View style={styles.modalOption}>
+                <Ionicons name="key-outline" size={24} color="black" />
+                <Text style={styles.modalText}>Senha</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToSignup}>
+              <View style={styles.modalOption}>
+                <Ionicons name="person-add-outline" size={24} color="black" />
+                <Text style={styles.modalText}>Registro</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToForgotPassword}>
+              <View style={styles.modalOption}>
+                <Ionicons name="lock-closed-outline" size={24} color="black" />
+                <Text style={styles.modalText}>Esqueceu a senha?</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
@@ -209,17 +288,17 @@ const styles = StyleSheet.create({
   storyItem: {
     alignItems: 'center',
     marginRight: 20,
-    marginBottom: 10, // Adicionei marginBottom aqui para separar os itens de história
+    marginBottom: 10,
   },
   storyImage: {
     width: 70,
     height: 70,
-    borderRadius: 35, // Deixa a imagem circular
+    borderRadius: 35,
     marginBottom: 5,
   },
   storyText: {
     textAlign: 'center',
-    marginTop: 5, // Espaçamento entre a imagem e o texto
+    marginTop: 5,
   },
   postContainer: {
     backgroundColor: '#ffffff',
@@ -250,9 +329,9 @@ const styles = StyleSheet.create({
   },
   postImage: {
     width: '100%',
-    aspectRatio: 1, // Mantém a proporção da imagem
+    aspectRatio: 1,
     marginBottom: 10,
-    borderRadius: 10, // Adicione essa propriedade para arredondar as bordas
+    borderRadius: 10,
   },
   postActions: {
     flexDirection: 'row',
@@ -265,7 +344,7 @@ const styles = StyleSheet.create({
   },
   likeCount: {
     fontWeight: 'bold',
-    marginLeft: 5, // Adicionando um pequeno espaçamento entre os ícones e o contador de curtidas
+    marginLeft: 5,
   },
   actionButton: {
     marginRight: 10,
@@ -288,8 +367,39 @@ const styles = StyleSheet.create({
     color: 'blue',
     marginLeft: 5,
   },
-  modalLinkText: {
-    color: 'blue',
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    width: '80%',
+  },
+  dragBar: {
+    width: 40,
+    height: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalText: {
+    fontSize: 18,
+    marginLeft: 10,
   },
   storyContainer: {
     paddingVertical: 10,
