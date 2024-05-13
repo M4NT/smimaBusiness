@@ -36,123 +36,96 @@ const StoryComponent = () => {
 // Componente de Post
 const Post = ({ post }) => {
   const [expanded, setExpanded] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const toggleExpansion = () => {
     setExpanded(!expanded);
   };
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
   const formatDescription = () => {
-    if (expanded) {
-      return post.description;
-    } else {
-      const maxCharacters = 95;
-      const maxLines = 2;
-      const lines = post.description.split('\n');
+    const maxCharactersFirstLine = 50;
+    const maxCharactersSecondLine = 45;
+    const maxCharacters = 95;
+    const maxLines = 2;
+    const lines = post.description.split('\n');
+    let shortenedDescription = '';
 
-      if (lines.length > maxLines || post.description.length > maxCharacters) {
-        return `${lines.slice(0, maxLines).join('\n').slice(0, maxCharacters)}`;
-      } else {
-        return post.description;
+    for (let line of lines) {
+      if (shortenedDescription.length + line.length > maxCharactersFirstLine) {
+        shortenedDescription += '\n' + line.substring(0, maxCharactersSecondLine);
+        break;
       }
+      shortenedDescription += line + '\n';
+    }
+
+    if (!expanded && post.description.length > maxCharactersFirstLine) {
+      return (
+        <Text>
+          {shortenedDescription.trim()}
+          <Text style={styles.moreLink} onPress={toggleExpansion}> ...</Text>
+        </Text>
+      );
+    } else {
+      return (
+        <Text>
+          {post.description}
+          {expanded && <Text style={styles.moreLink} onPress={toggleExpansion}> Ver menos</Text>}
+        </Text>
+      );
     }
   };
 
   return (
     <View style={styles.postContainer}>
-      <View style={styles.postHeader}>
-        <Image source={{ uri: post.userImage }} style={styles.userImage} />
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>{post.userName}</Text>
-          <View style={styles.userInfoRight}>
-            <View style={styles.categoryAndSeller}>
-              {post.isSeller && <Ionicons name="storefront-outline" size={20} color="green" />}
-              {post.isVerified && <Ionicons name="checkmark-circle" size={20} color="blue" />}
-              <Text style={styles.userCategory}>{post.userCategory}</Text>
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: post.postImage }} style={styles.postImage} />
+        <View style={styles.overlayContentContainer}>
+          {/* Informações do usuário */}
+          <View style={styles.userInfo}>
+            <Image source={{ uri: post.userImage }} style={styles.userImage} />
+            <View style={styles.userInfoText}>
+              <Text style={[styles.userName, { color: 'white' }]}>{post.userName}</Text>
+              <Ionicons name="storefront-outline" size={20} color="green" style={styles.userCategoryIcon} />
+              <TouchableOpacity style={[styles.followButton, { borderColor: '#04BF55', backgroundColor: 'transparent', borderWidth: 1 }]}>
+                <Text style={[styles.followButtonText, { color: 'white' }]}>Seguir</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.userCity}>{post.userCity}</Text>
+            <Ionicons name="storefront-outline" size={20} color="green" style={styles.userCategoryIcon} />
+          </View>
+
+          {/* Descrição da foto */}
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionText}>{formatDescription()}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={toggleModal} style={styles.actionButton}>
-          <MaterialIcons name="more-vert" size={24} color="black" />
-        </TouchableOpacity>
+        <View style={styles.overlayButtonsContainer}>
+          <TouchableOpacity style={styles.overlayButton}>
+            <Ionicons name="share-social-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.overlayButton}>
+            <Ionicons name="chatbubble-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.overlayButton}>
+            <Ionicons name="heart-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.overlayButton}>
+            <Ionicons name="bookmark-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={toggleModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalTopBar}>
-            {/* Aqui você pode adicionar qualquer conteúdo desejado para a barra superior */}
-          </View>
-          <View style={styles.modalContent}>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <Ionicons name="bookmark-outline" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Salvar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <Ionicons name="share-social-outline" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Compartilhar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <MaterialIcons name="favorite-border" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Adicionar aos Favoritos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <Ionicons name="person-remove-outline" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Deixar de Seguir</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <Ionicons name="eye-off-outline" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Ocultar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleModal} style={styles.modalOption}>
-              <MaterialIcons name="report" size={24} color="black" />
-              <Text style={styles.modalOptionText}>Denunciar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Image source={{ uri: post.postImage }} style={styles.postImage} />
-      <View style={{ height: 5 }} />
       {post.products && post.products.length > 0 && (
         <ProductContainer products={post.products} />
       )}
       <View style={styles.postActions}>
         <View style={styles.leftActions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="heart-outline" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="chatbubble-outline" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="share-social-outline" size={24} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.likeCount}>{post.likeCount} curtidas</Text>
+          {/* Botões restantes mantidos aqui */}
         </View>
         <TouchableOpacity style={[styles.actionButton, styles.saveButton]}>
           <Ionicons name="bookmark-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
       <View style={styles.postDescription}>
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>{post.userName}</Text>
-          <Text numberOfLines={expanded ? 0 : 2} ellipsizeMode="tail" style={styles.descriptionText}>
-            {formatDescription()}
-            {post.description.length > 95 && (
-              <Text onPress={toggleExpansion} style={styles.moreLink}>{expanded ? ' Ver menos' : '... Ver mais'}</Text>
-            )}
-          </Text>
-        </View>
+        {/* Descrição do post mantida aqui */}
       </View>
     </View>
   );
@@ -161,9 +134,20 @@ const Post = ({ post }) => {
 const FeedScreen = () => {
   const data = [
     {
+      id: 2,
+      postImage: 'https://via.placeholder.com/150',
+      userImage: 'https://via.placeholder.com/150',
+      userName: 'smima',
+      userCategory: 'Categoria do Usuário',
+      userCity: 'Cidade do Usuário',
+      likeCount: 32,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      isVerified: true,
+    },
+    {
       id: 1,
       userImage: 'https://via.placeholder.com/150',
-      userName: 'Nome do Usuário',
+      userName: 'smima',
       userCategory: 'Categoria do Usuário',
       userCity: 'Cidade do Usuário',
       postImage: 'https://via.placeholder.com/150',
@@ -203,17 +187,6 @@ const FeedScreen = () => {
         },
       ],
     },
-    {
-      id: 2,
-      userImage: 'https://via.placeholder.com/150',
-      userName: 'Nome do Usuário',
-      userCategory: 'Categoria do Usuário',
-      userCity: 'Cidade do Usuário',
-      postImage: 'https://via.placeholder.com/150',
-      likeCount: 32,
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      isVerified: true,
-    },
   ];
 
   return (
@@ -229,55 +202,6 @@ const FeedScreen = () => {
         keyExtractor={item => item.id.toString()}
       />
     </>
-  );
-};
-
-const ProfileModal = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const toggleModalSize = () => {
-    setModalVisible((prevVisible) => !prevVisible);
-  };
-
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.topBar} onPress={toggleModalSize}>
-        {/* Ícone ou indicador visual para mostrar que pode ser pressionado */}
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalView}>
-            <View style={styles.dragBar}></View>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Ionicons name="close-circle-outline" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToLogin}>
-              <View style={styles.modalOption}>
-                <Ionicons name="key-outline" size={24} color="black" />
-                <Text style={styles.modalText}>Senha</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToSignup}>
-              <View style={styles.modalOption}>
-                <Ionicons name="person-add-outline" size={24} color="black" />
-                <Text style={styles.modalText}>Registro</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToForgotPassword}>
-              <View style={styles.modalOption}>
-                <Ionicons name="lock-closed-outline" size={24} color="black" />
-                <Text style={styles.modalText}>Esqueceu a senha?</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
   );
 };
 
@@ -317,13 +241,35 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  userInfoText: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  userCategory: {
+  userFollow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  followButton: {
+    backgroundColor: 'green',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginLeft: 5,
+  },
+  userCategoryIcon: {
+    marginLeft: 5,
+  },
+  userCity: {
     fontSize: 14,
     color: 'gray',
   },
@@ -352,54 +298,13 @@ const styles = StyleSheet.create({
   saveButton: {
     marginLeft: 'auto',
   },
-  likeCount: {
-    fontWeight: 'bold',
+  descriptionContainer: {
     marginBottom: 5,
   },
-  descriptionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  descriptionText: {
-    flex: 1,
-  },
+  descriptionText: {},
   moreLink: {
     color: 'blue',
     marginLeft: 5,
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalView: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    width: '80%',
-  },
-  dragBar: {
-    width: 40,
-    height: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 5,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  modalOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalText: {
-    fontSize: 18,
-    marginLeft: 10,
   },
   storyContainer: {
     paddingVertical: 10,
@@ -419,22 +324,34 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 14,
   },
-  userCity: {
-    fontSize: 14,
-    color: 'gray',
-  },
   categoryAndSeller: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  userCategory: {
-    fontSize: 14,
-    color: 'gray',
-    marginLeft: 5,
+  overlayButtonsContainer: {
+    position: 'absolute',
+    top: '43%', // Ajuste aqui para posicionar os botões mais acima ou abaixo
+    right: 5, // Ajuste a distância da direita conforme necessário
   },
-  userCity: {
-    fontSize: 14,
-    color: 'gray',
+  overlayButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  overlayContentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
 });
 

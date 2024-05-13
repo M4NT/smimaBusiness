@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList, ImageBackground, Alert, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, Modal, TouchableWithoutFeedback, Dimensions, ImageBackground, ScrollView, Animated } from 'react-native';
 import { Camera } from 'expo-camera';
-import { FileSystem } from 'expo-file-system';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import * as MediaLibrary from 'expo-media-library';
-import { ImageEditor } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+
+const { width } = Dimensions.get('window');
 
 const CentralScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -13,18 +14,19 @@ const CentralScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("Recentes");
   const [albums, setAlbums] = useState([]);
   const [photos, setPhotos] = useState([]);
-  const [collageMode, setCollageMode] = useState(false);
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
-  const [isCollageModeActive, setIsCollageModeActive] = useState(false);
-  const [collageCounter, setCollageCounter] = useState(1);
-  const [longPressTimer, setLongPressTimer] = useState(null);
-  const [doubleTapTimer, setDoubleTapTimer] = useState(null);
-  const [photoAspectRatio, setPhotoAspectRatio] = useState(1);
-  const [selectedPhotoUri, setSelectedPhotoUri] = useState(null);
-  const [capturedPhoto, setCapturedPhoto] = useState(null); // Armazenar a foto capturada
+  const [description, setDescription] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [deleteIconVisible, setDeleteIconVisible] = useState(false);
+  const [deleteIconPosition, setDeleteIconPosition] = useState(new Animated.Value(-1));
 
   const cameraRef = useRef(null);
+  const scrollViewRef = useRef(null);
+
+  const handleDescriptionChange = (text) => {
+    setDescription(text);
+  };
 
   useEffect(() => {
     (async () => {
@@ -61,166 +63,152 @@ const CentralScreen = () => {
     setPhotos(media.assets);
   };
 
-  const toggleCollageMode = () => {
-    setCollageMode(!collageMode);
-    if (selectedPhotos.length > 0) {
-      setIsCollageModeActive(true);
-    }
-  };
-
-  // Função para tirar uma foto
   const takePicture = async () => {
     if (cameraRef.current) {
       let photo = await cameraRef.current.takePictureAsync({
-        allowsEditing: false, // Não permite a edição da foto aqui
-        quality: 0.8 // Define a qualidade da foto (0.8 é um exemplo)
+        allowsEditing: true,
+        quality: 0.8,
+        aspect: [1, 1] // Captura no formato 1:1
       });
 
-      setCapturedPhoto(photo); // Armazenar a foto capturada
+      setSelectedPhotos([...selectedPhotos, photo]);
     }
   };
 
-  const switchCamera = () => {
-    setType(
-      type === Camera.Constants.Type.back
-        ? Camera.Constants.Type.front
-        : Camera.Constants.Type.back
-    );
+  const openDescriptionModal = () => {
+    setModalVisible(true);
   };
 
-  const handlePhotoPressIn = (index) => {
-    setLongPressTimer(
-      setTimeout(() => {
-        setIsCollageModeActive(true);
-        setCollageMode(true);
-        setSelectedPhotoIndex(index);
-      }, 500)
-    );
+  const closeDescriptionModal = () => {
+    setModalVisible(false);
   };
 
-  const handlePhotoPressOut = () => {
-    clearTimeout(longPressTimer);
-    if (collageMode) {
-      setLongPressTimer(null);
-      startCollageCounter();
+  const handlePhotoSelection = async (photo) => {
+    if (selectedPhotos.length >= 9) {
+      return;
     }
+    setSelectedPhotos([...selectedPhotos, photo]);
   };
 
-  const handlePhotoSelect = (index) => {
-    if (!collageMode && index !== 0) {
-      setSelectedPhotoIndex(index);
-      setSelectedPhotoUri(photos[index]?.uri);
-    }
+  const handleDeleteIconPress = (index) => {
+    const newSelectedPhotos = [...selectedPhotos];
+    newSelectedPhotos.splice(index, 1);
+    setSelectedPhotos(newSelectedPhotos);
   };
 
-  const renderPhotoItem = ({ item, index }) => {
-    return (
-      <TouchableOpacity
-        style={styles.photoItem}
-        onPressIn={() => handlePhotoPressIn(index)}
-        onPressOut={handlePhotoPressOut}
-        onPress={() => handlePhotoSelect(index)}
-        delayLongPress={300}
-      >
-        <ImageBackground
-          source={{ uri: item.uri }}
-          style={styles.photoImage}
-        >
-          {selectedPhotos.includes(index) && (
-            <View style={styles.selectedIndicator}>
-              <Text style={styles.selectedIndicatorText}>{selectedPhotos.indexOf(index) + 1}</Text>
-            </View>
-          )}
-        </ImageBackground>
-      </TouchableOpacity>
-    );
+  const handleLongPress = (index) => {
+    setDeleteIconVisible(true);
+    Animated.timing(deleteIconPosition, {
+      toValue: index,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
   };
 
-  const startCollageCounter = () => {
-    let counter = 9;
-    const timer = setInterval(() => {
-      if (counter === 0) {
-        clearInterval(timer);
-        setCollageCounter(1);
-        setIsCollageModeActive(false);
-        return;
-      }
-      setCollageCounter(counter);
-      counter--;
-    }, 1000);
+  const handlePressOut = () => {
+    setDeleteIconVisible(false);
   };
 
-  // Função para redimensionar a foto capturada
-  const resizeCapturedPhoto = async () => {
-    if (capturedPhoto) {
-      const resizedPhoto = await ImageEditor.resize(capturedPhoto.uri, {
-        width: 300, // Largura desejada
-        height: 300, // Altura desejada
-        format: 'jpeg', // Formato desejado
-      });
+  const handleDragStart = () => {
+    setDragging(true);
+  };
 
-      // Você pode fazer o que quiser com a foto redimensionada aqui, como exibí-la em um componente Image
-
-      console.log(resizedPhoto); // Aqui você pode lidar com a foto redimensionada
+  const handleDragEnd = (index) => {
+    setDragging(false);
+    const newIndex = Math.floor(deleteIconPosition._value);
+    if (index !== newIndex) {
+      const newSelectedPhotos = [...selectedPhotos];
+      const [removedPhoto] = newSelectedPhotos.splice(index, 1);
+      newSelectedPhotos.splice(newIndex, 0, removedPhoto);
+      setSelectedPhotos(newSelectedPhotos);
     }
   };
 
   return (
     <View style={styles.container}>
-      {!selectedPhotoIndex && !isCollageModeActive && !capturedPhoto ? (
-        <Camera style={styles.camera} type={type} ref={cameraRef} ratio="4:4" />
-      ) : (
-        <View style={styles.previewContainer}>
-          <ImageBackground source={{ uri: capturedPhoto?.uri }} style={styles.capturedPhoto}>
-            {/* Aqui você pode adicionar componentes para permitir a edição da foto */}
-            <TouchableOpacity style={styles.controlButton} onPress={resizeCapturedPhoto}>
-              <Text style={{ color: 'white' }}>Redimensionar</Text>
+      <View style={styles.cameraContainer}>
+        <Camera style={styles.camera} type={type} ref={cameraRef} />
+        <View style={styles.captureButtonContainer}>
+          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+            <MaterialCommunityIcons name="camera" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.albumAndDescriptionContainer}>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingRight: 5 }}
+        >
+          {selectedPhotos.map((photo, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.selectedPhotoContainer}
+              onPress={() => handlePhotoSelection(photo)}
+              onLongPress={() => handleLongPress(index)}
+              onPressOut={handlePressOut}
+            >
+              <Animated.View
+                style={[
+                  styles.selectedPhoto,
+                  { opacity: dragging ? 0.7 : 1, marginLeft: index === 0 ? 0 : 5 },
+                  index === deleteIconPosition ? { position: 'absolute', right: 5, top: 5 } : null,
+                ]}
+              >
+                <ImageBackground source={{ uri: photo.uri }} style={styles.photoPreview}>
+                  {selectedPhotos.length > 1 && (
+                    <View style={styles.photoCountContainer}>
+                      <Text style={styles.photoCount}>{index + 1}</Text>
+                    </View>
+                  )}
+                </ImageBackground>
+              </Animated.View>
+              {deleteIconVisible && index === deleteIconPosition && (
+                <TouchableOpacity
+                  style={styles.deleteIcon}
+                  onPress={() => handleDeleteIconPress(index)}
+                >
+                  <MaterialCommunityIcons name="trash-can-outline" size={20} color="black" />
+                </TouchableOpacity>
+              )}
             </TouchableOpacity>
-          </ImageBackground>
+          ))}
+        </ScrollView>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionLabel}>Descrição da foto</Text>
+          <TextInput
+            placeholder="Adicione uma descrição..."
+            value={description}
+            onChangeText={handleDescriptionChange}
+            style={styles.descriptionInput}
+            multiline={true}
+            onFocus={openDescriptionModal}
+          />
         </View>
-      )}
-      {!selectedPhotoIndex && (
-        <View style={styles.albumHeader}>
-          <Picker
-            selectedValue={selectedAlbum}
-            style={styles.albumPicker}
-            onValueChange={(itemValue) => {
-              setSelectedAlbum(itemValue);
-              loadPhotos(itemValue);
-            }}
-          >
-            {albums.map((album) => (
-              <Picker.Item key={album.id} label={album.title} value={album.title} />
-            ))}
-          </Picker>
-          <TouchableOpacity
-            style={[styles.collageButton, collageMode && styles.collageButtonActive]}
-            onPress={toggleCollageMode}
-          >
-            <MaterialCommunityIcons name="image-multiple" size={24} color={collageMode ? "white" : "black"} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cameraButton} onPress={switchCamera}>
-            <MaterialCommunityIcons name="camera-switch" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
-            <MaterialCommunityIcons name="camera" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      )}
-      {!selectedPhotoIndex && !isCollageModeActive && !capturedPhoto && (
-        <FlatList
-          data={photos}
-          renderItem={renderPhotoItem}
-          keyExtractor={(item) => item.id}
-          numColumns={4}
-          style={styles.photoGrid}
-        />
-      )}
-      {isCollageModeActive && (
-        <TouchableOpacity style={styles.nextButton}>
-          <MaterialCommunityIcons name="arrow-right" size={24} color="black" />
-        </TouchableOpacity>
-      )}
+      </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeDescriptionModal}
+      >
+        <TouchableWithoutFeedback onPress={closeDescriptionModal}>
+          <View style={styles.modalBackground}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalView}>
+                <TextInput
+                  placeholder="Adicione uma descrição..."
+                  value={description}
+                  onChangeText={handleDescriptionChange}
+                  style={styles.descriptionInputModal}
+                  multiline={true}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -228,113 +216,108 @@ const CentralScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    margin: 5,
+  },
+  cameraContainer: {
+    flex: 1,
+    borderRadius: 30,
+    overflow: 'hidden',
+    marginBottom: 5,
   },
   camera: {
-    aspectRatio: 1,
-  },
-  previewContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  capturedPhoto: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
-    justifyContent: 'center',
-    alignItems: 'center',
+    aspectRatio: 1,
   },
-  controlsContainer: {
+  captureButtonContainer: {
     position: 'absolute',
-    bottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    bottom: 10,
+    alignSelf: 'center',
   },
-  controlButton: {
-    marginHorizontal: 10,
+  captureButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    padding: 15,
+    borderRadius: 50,
+  },
+  albumAndDescriptionContainer: {
+    marginBottom: 10,
+  },
+  selectedPhotoContainer: {
+    marginRight: 5,
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  selectedPhoto: {
+    width: 70,
+    height: 70,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  photoPreview: {
+    width: '100%',
+    height: '100%',
+  },
+  photoCountContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 50,
+    margin: 5,
+  },
+  photoCount: {
+    color: 'white',
+    fontSize: 12,
+  },
+  descriptionContainer: {
+    marginBottom: 10,
+  },
+  descriptionLabel: {
+    fontSize: 10,
+    marginBottom: 5,
+  },
+  descriptionInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 10,
+    height: 100,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    margin: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  descriptionInputModal: {
+    width: '100%',
+    height: 150,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
     padding: 10,
   },
-  albumHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  albumPicker: {
-    width: '50%',
-    height: 40,
-  },
-  collageButton: {
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  collageButtonActive: {
-    backgroundColor: 'blue',
-    borderRadius: 15,
-  },
-  cameraButton: {
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoGrid: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  photoItem: {
-    flex: 1,
-    margin: 2,
-    aspectRatio: 1, // Manter as fotos quadradas
-  },
-  photoImage: {
-    flex: 1,
-  },
-  selectedIndicator: {
+  deleteIcon: {
     position: 'absolute',
     top: 5,
     right: 5,
-    width: 20,
-    height: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedIndicatorText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  nextButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'white',
-    borderRadius: 30,
-    padding: 10,
-    elevation: 5,
-  },
-  selectedPhotoCounter: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  selectedPhotoCounterText: {
-    color: 'black',
-    fontWeight: 'bold',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 
