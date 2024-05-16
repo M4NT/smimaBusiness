@@ -89,7 +89,6 @@ const Post = ({ post }) => {
                 <Text style={[styles.followButtonText, { color: 'white' }]}>Seguir</Text>
               </TouchableOpacity>
             </View>
-            <Ionicons name="storefront-outline" size={20} color="green" style={styles.userCategoryIcon} />
           </View>
 
           {/* Descrição da foto */}
@@ -99,16 +98,13 @@ const Post = ({ post }) => {
         </View>
         <View style={styles.overlayButtonsContainer}>
           <TouchableOpacity style={styles.overlayButton}>
-            <Ionicons name="share-social-outline" size={24} color="black" />
+            <Ionicons name="heart-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.overlayButton}>
             <Ionicons name="chatbubble-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.overlayButton}>
-            <Ionicons name="heart-outline" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.overlayButton}>
-            <Ionicons name="bookmark-outline" size={24} color="black" />
+            <Ionicons name="share-social-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
       </View>
@@ -120,9 +116,6 @@ const Post = ({ post }) => {
         <View style={styles.leftActions}>
           {/* Botões restantes mantidos aqui */}
         </View>
-        <TouchableOpacity style={[styles.actionButton, styles.saveButton]}>
-          <Ionicons name="bookmark-outline" size={24} color="black" />
-        </TouchableOpacity>
       </View>
       <View style={styles.postDescription}>
         {/* Descrição do post mantida aqui */}
@@ -134,7 +127,7 @@ const Post = ({ post }) => {
 const FeedScreen = () => {
   const data = [
     {
-      id: 2,
+      id: 1,
       postImage: 'https://via.placeholder.com/150',
       userImage: 'https://via.placeholder.com/150',
       userName: 'smima',
@@ -145,7 +138,7 @@ const FeedScreen = () => {
       isVerified: true,
     },
     {
-      id: 1,
+      id: 2,
       userImage: 'https://via.placeholder.com/150',
       userName: 'smima',
       userCategory: 'Categoria do Usuário',
@@ -277,7 +270,7 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     marginBottom: 10,
-    borderRadius: 10,
+    borderRadius: 20,
   },
   postActions: {
     flexDirection: 'row',
@@ -330,7 +323,7 @@ const styles = StyleSheet.create({
   },
   overlayButtonsContainer: {
     position: 'absolute',
-    top: '43%', // Ajuste aqui para posicionar os botões mais acima ou abaixo
+    top: '58%', // Ajuste aqui para posicionar os botões mais acima ou abaixo
     right: 5, // Ajuste a distância da direita conforme necessário
   },
   overlayButton: {
@@ -352,6 +345,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 10,
     paddingBottom: 10,
+  },
+  descriptionScroll: {
+    maxHeight: 100, // Alteração na altura máxima da caixa de rolagem
   },
 });
 
