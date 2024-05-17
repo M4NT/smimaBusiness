@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Camera } from 'expo-camera';
 
 import ProductContainer from '../../components/ProductContainer';
 
