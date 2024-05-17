@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Camera } from 'expo-camera';
 
 import ProductContainer from '../../components/ProductContainer';
 
@@ -43,7 +42,7 @@ const Post = ({ post }) => {
   };
 
   const formatDescription = () => {
-    const maxCharactersFirstLine = 50;
+    const maxCharactersFirstLine = 45;
     const maxCharactersSecondLine = 45;
     const maxCharacters = 95;
     const maxLines = 2;
@@ -52,26 +51,28 @@ const Post = ({ post }) => {
 
     for (let line of lines) {
       if (shortenedDescription.length + line.length > maxCharactersFirstLine) {
-        shortenedDescription += '\n' + line.substring(0, maxCharactersSecondLine);
+        shortenedDescription += '\n' + line.substring(0, maxCharactersSecondLine) + '...';
         break;
       }
       shortenedDescription += line + '\n';
     }
 
     if (!expanded && post.description.length > maxCharactersFirstLine) {
-      return (
-        <Text>
-          {shortenedDescription.trim()}
-          <Text style={styles.moreLink} onPress={toggleExpansion}> ...</Text>
-        </Text>
-      );
+      const words = shortenedDescription.split(' ');
+
+      return words.map((word, index) => (
+        <TouchableOpacity key={index} onPress={toggleExpansion}>
+          <Text>{word} </Text>
+        </TouchableOpacity>
+      ));
     } else {
-      return (
-        <Text>
-          {post.description}
-          {expanded && <Text style={styles.moreLink} onPress={toggleExpansion}> Ver menos</Text>}
-        </Text>
-      );
+      const words = post.description.split(' ');
+
+      return words.map((word, index) => (
+        <TouchableOpacity key={index} onPress={toggleExpansion}>
+          <Text>{word} </Text>
+        </TouchableOpacity>
+      ));
     }
   };
 
@@ -94,7 +95,7 @@ const Post = ({ post }) => {
 
           {/* Descrição da foto */}
           <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionText}>{formatDescription()}</Text>
+            <Text style={styles.descriptionText} onPress={toggleExpansion}>{formatDescription()}</Text>
           </View>
         </View>
         <View style={styles.overlayButtonsContainer}>
@@ -324,8 +325,8 @@ const styles = StyleSheet.create({
   },
   overlayButtonsContainer: {
     position: 'absolute',
-    top: '58%', // Ajuste aqui para posicionar os botões mais acima ou abaixo
-    right: 5, // Ajuste a distância da direita conforme necessário
+    top: '54%',
+    right: 10,
   },
   overlayButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -344,11 +345,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 15,
+    paddingBottom: 20,
   },
   descriptionScroll: {
-    maxHeight: 100, // Alteração na altura máxima da caixa de rolagem
+    maxHeight: 100,
   },
 });
 
