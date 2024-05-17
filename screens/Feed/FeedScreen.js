@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity, 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import ProductContainer from '../../components/ProductContainer';
+import HeaderComponent from './HeaderComponent'; // Importe o HeaderComponent
 
 // Componente de Story
 const StoryComponent = () => {
@@ -191,24 +192,16 @@ const FeedScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Renderiza a lista de posts usando FlatList */}
       <FlatList
         data={data}
+        ListHeaderComponent={<HeaderComponent />} // Adicione o HeaderComponent aqui
         renderItem={({ item }) => (
           <View>
-            {/* Renderiza o componente StoryComponent antes da lista de posts */}
             {item.type === 'story' && <StoryComponent />}
-            {/* Renderiza o componente Post com os dados de cada item */}
-            {item.type !== 'story' && (
-              <View style={styles.postContainer}>
-                {/* Aqui você pode adicionar o conteúdo do post diretamente */}
-                <Image source={{ uri: item.postImage }} style={styles.postImage} />
-                {/* Adicione os outros elementos do post aqui, como o nome do usuário, descrição, botões de ação, etc. */}
-              </View>
-            )}
+            {item.type !== 'story' && <Post post={item} />}
           </View>
         )}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
