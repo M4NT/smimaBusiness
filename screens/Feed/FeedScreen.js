@@ -4,6 +4,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import ProductContainer from '../../components/ProductContainer';
 
+// Componente de Story
 const StoryComponent = () => {
   const storyImages = [
     'https://via.placeholder.com/150',
@@ -116,7 +117,6 @@ const Post = ({ post }) => {
       )}
       <View style={styles.postActions}>
         <View style={styles.leftActions}>
-          {/* Botões restantes mantidos aqui */}
         </View>
       </View>
       <View style={styles.postDescription}>
@@ -127,7 +127,12 @@ const Post = ({ post }) => {
 };
 
 const FeedScreen = () => {
+  // Define os dados dos posts
   const data = [
+    {
+      id: 'story', // Adiciona um ID para o StoryComponent
+      type: 'story', // Adiciona um tipo para identificar o componente StoryComponent
+    },
     {
       id: 1,
       postImage: 'https://via.placeholder.com/150',
@@ -185,18 +190,27 @@ const FeedScreen = () => {
   ];
 
   return (
-    <>
-      <StoryComponent />
+    <View style={styles.container}>
+      {/* Renderiza a lista de posts usando FlatList */}
       <FlatList
         data={data}
         renderItem={({ item }) => (
           <View>
-            <Post post={item} />
+            {/* Renderiza o componente StoryComponent antes da lista de posts */}
+            {item.type === 'story' && <StoryComponent />}
+            {/* Renderiza o componente Post com os dados de cada item */}
+            {item.type !== 'story' && (
+              <View style={styles.postContainer}>
+                {/* Aqui você pode adicionar o conteúdo do post diretamente */}
+                <Image source={{ uri: item.postImage }} style={styles.postImage} />
+                {/* Adicione os outros elementos do post aqui, como o nome do usuário, descrição, botões de ação, etc. */}
+              </View>
+            )}
           </View>
         )}
         keyExtractor={item => item.id.toString()}
       />
-    </>
+    </View>
   );
 };
 
@@ -238,7 +252,7 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 0,
   },
   userInfoText: {
     flex: 1,
@@ -302,8 +316,8 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   storyContainer: {
-    paddingVertical: 10,
-    paddingLeft: 10,
+    paddingTop: 10,
+    marginLeft: 10,
   },
   productImage: {
     width: 300,

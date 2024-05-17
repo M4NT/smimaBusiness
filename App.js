@@ -2,12 +2,21 @@
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import MainTabNavigator from './navigation/MainTabNavigator'; // Supondo que você tenha um arquivo de navegação principal
+import { createStackNavigator } from '@react-navigation/stack';
+import MainTabNavigator from './navigation/MainTabNavigator';
+
+const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <MainTabNavigator />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Main"
+          component={MainTabNavigator}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

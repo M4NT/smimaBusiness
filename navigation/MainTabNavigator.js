@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import FeedScreen from '../screens/Feed/FeedScreen'; // Importe corretamente
-import CentralScreen from '../screens/Central/CentralScreen'; // Importe corretamente
-import Profile from '../screens/Profile/Profile'; // Importe corretamente
+import FeedScreen from '../screens/Feed/FeedScreen';
+import CentralScreen from '../screens/Central/CentralScreen';
+import Profile from '../screens/Profile/Profile';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -11,6 +11,7 @@ const MainTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerShown: false, // Esta opção oculta o título no cabeçalho em todas as telas do Tab Navigator
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
