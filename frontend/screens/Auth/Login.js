@@ -1,23 +1,28 @@
 // screens/Auth/Login.js
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 
-const Login = ({ navigation }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Lógica de login aqui
-  };
-
-  const navigateToSignup = () => {
-    navigation.navigate('Signup'); // Navega para a tela de registro
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/users/login', {
+        email,
+        password
+      });
+      Alert.alert('Success', 'Login successful');
+      // Handle successful login (e.g., navigate to another screen)
+    } catch (error) {
+      Alert.alert('Error', 'Invalid email or password');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Faça login na sua conta</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -32,10 +37,7 @@ const Login = ({ navigation }) => {
         onChangeText={setPassword}
       />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={navigateToSignup}>
-        <Text style={styles.signupText}>Não tem uma conta? Registre-se aqui</Text>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -75,10 +77,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  signupText: {
-    marginTop: 10,
-    textDecorationLine: 'underline',
   },
 });
 
