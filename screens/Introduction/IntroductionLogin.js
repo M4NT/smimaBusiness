@@ -5,6 +5,7 @@ import LittleManLogin from '../../assets/little-man-login.svg';
 import FacebookIcon from '../../assets/icons/facebook-icon.svg';
 import GmailIcon from '../../assets/icons/gmail-icon.svg';
 import AppleIcon from '../../assets/icons/apple-icon.svg';
+import Login from '../Auth/Login';
 
 const IntroductionLogin = ({ navigation }) => {
   return (

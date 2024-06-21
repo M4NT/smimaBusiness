@@ -8,11 +8,11 @@ import HeaderComponent from './HeaderComponent'; // Importe o HeaderComponent
 // Componente de Story
 const StoryComponent = () => {
   const storyImages = [
-    'https://via.placeholder.com/150',
-    'https://via.placeholder.com/150',
-    'https://via.placeholder.com/150',
-    'https://via.placeholder.com/150',
-    'https://via.placeholder.com/150',
+    'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/428364/pexels-photo-428364.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/1674752/pexels-photo-1674752.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
   ];
 
   return (
@@ -97,7 +97,7 @@ const Post = ({ post }) => {
 
           {/* Descrição da foto */}
           <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionText} onPress={toggleExpansion}>{formatDescription()}</Text>
+            <Text style={styles.descriptionText} color="red" onPress={toggleExpansion}>{formatDescription()}</Text>
           </View>
         </View>
         <View style={styles.overlayButtonsContainer}>
@@ -136,7 +136,7 @@ const FeedScreen = () => {
     },
     {
       id: 1,
-      postImage: 'https://via.placeholder.com/150',
+      postImage: 'https://m4nt.github.io/smima-pages/assets/images/slider/slide-img/2-2-960x741.png',
       userImage: 'https://via.placeholder.com/150',
       userName: 'smima',
       userCategory: 'Categoria do Usuário',
@@ -303,9 +303,11 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     marginBottom: 5,
   },
-  descriptionText: {},
+  descriptionText: {
+    color: '#fff',
+  },
   moreLink: {
-    color: 'blue',
+    color: '#fff',
     marginLeft: 5,
   },
   storyContainer: {
